@@ -1,0 +1,141 @@
+[gd_scene load_steps=17 format=3 uid="uid://c1beqwnq8weax"]
+
+[ext_resource type="Texture2D" uid="uid://dydsb5n6ielrt" path="res://new_animated_texture.tres" id="1_sxidv"]
+[ext_resource type="Script" path="res://explosionDeleter.gd" id="2_4f853"]
+[ext_resource type="Animation" uid="uid://85q5fk2s8jsj" path="res://explosion_circle.res" id="3_knf4y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jcqld"]
+transparency = 1
+shading_mode = 0
+diffuse_mode = 3
+albedo_texture = ExtResource("1_sxidv")
+billboard_mode = 1
+grow = true
+grow_amount = 3.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_u6gdp"]
+material = SubResource("StandardMaterial3D_jcqld")
+size = Vector2(2, 2)
+
+[sub_resource type="Gradient" id="Gradient_ee4gf"]
+offsets = PackedFloat32Array(0, 0.303371, 1)
+colors = PackedColorArray(0.944437, 0.130383, 0.171139, 1, 0.74, 0.597303, 0.0814, 1, 0.0295066, 0.0295066, 0.0295066, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tmmwl"]
+cull_mode = 1
+shading_mode = 0
+diffuse_mode = 3
+albedo_color = Color(0.921569, 0.596078, 0.192157, 1)
+grow = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_j3yca"]
+material = SubResource("StandardMaterial3D_tmmwl")
+radius = 0.1
+height = 0.2
+radial_segments = 17
+rings = 4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f1y1o"]
+transparency = 1
+cull_mode = 1
+shading_mode = 0
+diffuse_mode = 3
+albedo_color = Color(0.921569, 0.596078, 0.192157, 1)
+grow = true
+
+[sub_resource type="Animation" id="Animation_4xcuy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshInstance3D:surface_material_override/0:albedo_color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.921569, 0.596078, 0.192157, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gsyjt"]
+_data = {
+"RESET": SubResource("Animation_4xcuy"),
+"explosion_circle": ExtResource("3_knf4y")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7cabd"]
+animation = &"explosion_circle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_a62st"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_aevxu"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_rp5bq"]
+states/Start/position = Vector2(186, 100)
+states/explosion_circle/node = SubResource("AnimationNodeAnimation_7cabd")
+states/explosion_circle/position = Vector2(447, 60)
+transitions = ["Start", "explosion_circle", SubResource("AnimationNodeStateMachineTransition_a62st"), "explosion_circle", "End", SubResource("AnimationNodeStateMachineTransition_aevxu")]
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_pwl5p"]
+
+[node name="ExplosionParticles" type="CPUParticles3D"]
+emitting = false
+amount = 40
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+lifetime_randomness = 0.6
+mesh = SubResource("QuadMesh_u6gdp")
+emission_shape = 1
+emission_sphere_radius = 2.0
+direction = Vector3(0, 0, 0)
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 30.0
+damping_min = 0.2
+damping_max = 0.7
+scale_amount_max = 2.0
+color_ramp = SubResource("Gradient_ee4gf")
+hue_variation_min = -0.64
+hue_variation_max = 0.38
+script = ExtResource("2_4f853")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+autostart = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_j3yca")
+surface_material_override/0 = SubResource("StandardMaterial3D_f1y1o")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+reset_on_save = false
+libraries = {
+"": SubResource("AnimationLibrary_gsyjt")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_rp5bq")
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/playback = SubResource("AnimationNodeStateMachinePlayback_pwl5p")
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

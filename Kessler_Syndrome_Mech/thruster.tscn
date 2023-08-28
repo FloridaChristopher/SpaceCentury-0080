@@ -1,0 +1,91 @@
+[gd_scene load_steps=12 format=3 uid="uid://fqrwt2s4ry0b"]
+
+[ext_resource type="Script" path="res://thruster.gd" id="1_8yp8e"]
+[ext_resource type="PackedScene" uid="uid://banyb28vn4gn0" path="res://models/thruster.fbx" id="2_s11aa"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_besys"]
+albedo_color = Color(0, 0, 0, 0)
+emission_enabled = true
+emission = Color(0.286275, 0.8, 0.913725, 1)
+emission_energy_multiplier = 1.13
+
+[sub_resource type="SphereMesh" id="SphereMesh_rwaxq"]
+material = SubResource("StandardMaterial3D_besys")
+radius = 0.15
+height = 0.3
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_747ek"]
+animation = &"round_boost"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_x2y0e"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_yelx2"]
+states/round_boost/node = SubResource("AnimationNodeAnimation_747ek")
+states/round_boost/position = Vector2(391, 108)
+transitions = ["Start", "round_boost", SubResource("AnimationNodeStateMachineTransition_x2y0e")]
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id="AnimationNodeStateMachinePlayback_8i2sx"]
+
+[sub_resource type="Animation" id="Animation_xshv3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_24nxt"]
+resource_name = "round_boost"
+length = 0.16
+loop_mode = 1
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.08, 0.16),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0.4, 0.4, 0.4), Vector3(1.35, 1.35, 1.35), Vector3(0.4, 0.4, 0.4)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_y2jp7"]
+_data = {
+"RESET": SubResource("Animation_xshv3"),
+"round_boost": SubResource("Animation_24nxt")
+}
+
+[node name="Thruster" type="Node3D" node_paths=PackedStringArray("mesh") groups=["MWcomponent"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.214901)
+script = ExtResource("1_8yp8e")
+mesh = NodePath("MeshInstance3D")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.313731)
+mesh = SubResource("SphereMesh_rwaxq")
+
+[node name="thruster" parent="." instance=ExtResource("2_s11aa")]
+transform = Transform3D(0.589263, 0, 0, 0, -2.57575e-08, -0.589263, 0, 0.589263, -2.57575e-08, 0, 0, -0.19744)
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource("AnimationNodeStateMachine_yelx2")
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/playback = SubResource("AnimationNodeStateMachinePlayback_8i2sx")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+speed_scale = 0.5
+libraries = {
+"": SubResource("AnimationLibrary_y2jp7")
+}

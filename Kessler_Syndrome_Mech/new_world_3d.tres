@@ -1,0 +1,10 @@
+[gd_resource type="World3D" load_steps=3 format=3 uid="uid://dy55truevrne2"]
+
+[ext_resource type="Sky" uid="uid://csgqa6r3j2wvc" path="res://space_1.tres" id="1_s31sy"]
+
+[sub_resource type="Environment" id="Environment_yq56n"]
+background_mode = 2
+sky = ExtResource("1_s31sy")
+
+[resource]
+environment = SubResource("Environment_yq56n")

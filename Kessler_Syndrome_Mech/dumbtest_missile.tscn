@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3 uid="uid://sdwgyk3bdo2w"]
+
+[ext_resource type="Script" path="res://shipPhys.gd" id="1_4lsln"]
+[ext_resource type="Script" path="res://AI.gd" id="4_4m1ea"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ydhmn"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_mvtjs"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_geypw"]
+
+[node name="Missile" type="RigidBody3D"]
+gravity_scale = 0.0
+can_sleep = false
+script = ExtResource("1_4lsln")
+localForce = false
+
+[node name="AI" type="Node3D" parent="." node_paths=PackedStringArray("gfdgdfgdf")]
+script = ExtResource("4_4m1ea")
+allegiance = 1
+gfdgdfgdf = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_ydhmn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_mvtjs")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.547882, 0, 0, 0, 0.547882, 0, 0, 0, 1.1052, 0, 0.029501, 0.504687)
+mesh = SubResource("PrismMesh_geypw")

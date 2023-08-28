@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cgxgxc4ji05pr"]
+
+[ext_resource type="Script" path="res://fueltank.gd" id="1_4kj7x"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_8gct5"]
+radial_segments = 7
+rings = 5
+
+[node name="FuelTank" type="Node3D" groups=["MWcomponent"]]
+script = ExtResource("1_4kj7x")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_8gct5")

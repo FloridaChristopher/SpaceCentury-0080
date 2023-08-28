@@ -1,0 +1,51 @@
+[gd_scene load_steps=10 format=3 uid="uid://dmlhu3ugs60pf"]
+
+[ext_resource type="Script" path="res://healthSystem.gd" id="1_h3war"]
+[ext_resource type="Script" path="res://HitSystem.gd" id="1_tt43v"]
+[ext_resource type="PackedScene" uid="uid://c1beqwnq8weax" path="res://explosion_particles.tscn" id="2_kmrff"]
+[ext_resource type="Material" uid="uid://75fqfvpp7pn3" path="res://Pixel_shader.tres" id="3_eitoo"]
+[ext_resource type="Script" path="res://SimpleFlashEffect.gd" id="3_ghqew"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xc578"]
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_f4evc"]
+material = ExtResource("3_eitoo")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ofpad"]
+diffuse_mode = 3
+specular_mode = 1
+albedo_color = Color(0.929412, 0, 0.188235, 1)
+roughness = 0.5
+emission_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_655f4"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+
+[node name="SpaceDebris" type="Node3D"]
+script = ExtResource("1_h3war")
+particleSys = ExtResource("2_kmrff")
+
+[node name="HitboxTestTarget" type="Area3D" parent="." node_paths=PackedStringArray("hitflash")]
+script = ExtResource("1_tt43v")
+hitflash = NodePath("Timer")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitboxTestTarget"]
+shape = SubResource("BoxShape3D_xc578")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="HitboxTestTarget"]
+transform = Transform3D(0.999998, 0.00145226, -0.00104262, -0.00145207, 0.999999, 0.000189308, 0.0010429, -0.0001878, 0.999999, 0, 0, 0)
+mesh = SubResource("BoxMesh_f4evc")
+surface_material_override/0 = SubResource("StandardMaterial3D_ofpad")
+
+[node name="Timer" type="Timer" parent="HitboxTestTarget" node_paths=PackedStringArray("mesh")]
+wait_time = 0.1
+one_shot = true
+script = ExtResource("3_ghqew")
+mesh = NodePath("../MeshInstance3D")
+flashMaterial = SubResource("StandardMaterial3D_655f4")
+
+[connection signal="body_entered" from="HitboxTestTarget" to="HitboxTestTarget" method="_on_body_entered"]
+[connection signal="timeout" from="HitboxTestTarget/Timer" to="HitboxTestTarget/Timer" method="_on_timeout"]

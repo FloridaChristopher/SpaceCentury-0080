@@ -1,0 +1,59 @@
+[gd_scene load_steps=9 format=3 uid="uid://b0erib4tkq75x"]
+
+[ext_resource type="Script" path="res://shipPhys.gd" id="1_8u17n"]
+[ext_resource type="Script" path="res://MWsystems.gd" id="1_fi5dr"]
+[ext_resource type="Script" path="res://thrustercontrol.gd" id="2_b1cp4"]
+[ext_resource type="Script" path="res://AI.gd" id="3_whhsa"]
+[ext_resource type="PackedScene" uid="uid://fqrwt2s4ry0b" path="res://thruster.tscn" id="5_l7afx"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_ydhmn"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_mvtjs"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_geypw"]
+
+[node name="Missile" type="RigidBody3D"]
+gravity_scale = 0.0
+can_sleep = false
+script = ExtResource("1_8u17n")
+localForce = false
+
+[node name="MWsystems" type="Node3D" parent="." node_paths=PackedStringArray("thrustCntrl")]
+script = ExtResource("1_fi5dr")
+thrustCntrl = NodePath("../thrustcontrol")
+
+[node name="thrustcontrol" type="Node3D" parent="." node_paths=PackedStringArray("Vessel", "body")]
+script = ExtResource("2_b1cp4")
+Vessel = NodePath("../AI")
+body = NodePath("..")
+
+[node name="AI" type="Node3D" parent="."]
+script = ExtResource("3_whhsa")
+allegiance = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_ydhmn")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_mvtjs")
+
+[node name="Thruster" parent="." node_paths=PackedStringArray("body") instance=ExtResource("5_l7afx")]
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 0, -0.658017)
+body = NodePath("..")
+left = true
+right = true
+up = true
+down = true
+backward = true
+forward = true
+pitchUp = true
+pitchDown = true
+yawLeft = true
+yawRight = true
+rollLeft = true
+rollRight = true
+thrustForce = 10
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.547882, 0, 0, 0, 0.547882, 0, 0, 0, 1.1052, 0, 0.029501, 0.504687)
+mesh = SubResource("PrismMesh_geypw")

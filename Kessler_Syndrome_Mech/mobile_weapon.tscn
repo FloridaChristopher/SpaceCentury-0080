@@ -1,0 +1,166 @@
+[gd_scene load_steps=18 format=3 uid="uid://fgw3bgta18y5"]
+
+[ext_resource type="Script" path="res://shipPhys.gd" id="1_t6gpd"]
+[ext_resource type="Script" path="res://CameraAnim.gd" id="2_5rr2r"]
+[ext_resource type="Script" path="res://Turret.gd" id="2_ba1ve"]
+[ext_resource type="Material" uid="uid://75fqfvpp7pn3" path="res://Pixel_shader.tres" id="2_ghxtn"]
+[ext_resource type="Script" path="res://bulletSpawner.gd" id="3_7bh2u"]
+[ext_resource type="PackedScene" uid="uid://dgmubnetunxtw" path="res://bullet_test.tscn" id="4_6epoj"]
+[ext_resource type="Script" path="res://thrustercontrol.gd" id="4_xf6is"]
+[ext_resource type="PackedScene" uid="uid://fqrwt2s4ry0b" path="res://thruster.tscn" id="5_c2hm8"]
+[ext_resource type="PackedScene" uid="uid://c328njn4uq21m" path="res://models/SpaceAr15.fbx" id="7_od6jt"]
+[ext_resource type="Script" path="res://MWsystems.gd" id="9_bguf1"]
+[ext_resource type="Script" path="res://shipcontrol.gd" id="9_recmw"]
+[ext_resource type="PackedScene" uid="uid://47ecwwflb48k" path="res://models/mecha head.fbx" id="12_f4d3h"]
+[ext_resource type="PackedScene" uid="uid://cgxgxc4ji05pr" path="res://test_fuel_tank.tscn" id="13_uv1su"]
+[ext_resource type="Script" path="res://target.gd" id="14_0al03"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sn54e"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ars3p"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_uil3i"]
+size = Vector3(0.2, 0.2, 1)
+
+[node name="MobileWeapon" type="RigidBody3D" groups=["Player"]]
+gravity_scale = 0.0
+can_sleep = false
+angular_damp = 0.5
+script = ExtResource("1_t6gpd")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_sn54e")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = ExtResource("2_ghxtn")
+mesh = SubResource("BoxMesh_ars3p")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.151763, 0, 0, 0, 1, 0, 0, 0, 0.237296, 0.402845, -0.648377, 0.185164)
+material_override = ExtResource("2_ghxtn")
+mesh = SubResource("BoxMesh_ars3p")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.151763, 0, 0, 0, 1, 0, 0, 0, 0.237296, -0.443591, -0.648377, 0.180671)
+material_override = ExtResource("2_ghxtn")
+mesh = SubResource("BoxMesh_ars3p")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.151763, 0, 0, 0, 0.523034, 0.20225, 0, -0.852312, 0.124114, 0.416165, -1.31135, 0.47502)
+material_override = ExtResource("2_ghxtn")
+mesh = SubResource("BoxMesh_ars3p")
+skeleton = NodePath("")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.151763, 0, 0, 0, 0.523034, 0.20225, 0, -0.852312, 0.124114, -0.43756, -1.31135, 0.47502)
+material_override = ExtResource("2_ghxtn")
+mesh = SubResource("BoxMesh_ars3p")
+skeleton = NodePath("")
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("rbody")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.53195, 4.01577)
+current = true
+script = ExtResource("2_5rr2r")
+rbody = NodePath("..")
+
+[node name="AudioListener3D" type="AudioListener3D" parent="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.53195, -4.01577)
+current = true
+
+[node name="Thrusters" type="Node3D" parent="." node_paths=PackedStringArray("Vessel", "body") groups=["MWcomponent"]]
+script = ExtResource("4_xf6is")
+Vessel = NodePath("../ControlSys")
+body = NodePath("..")
+
+[node name="Thruster" parent="Thrusters" instance=ExtResource("5_c2hm8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.932949, 0, 0.623418)
+forward = true
+yawRight = true
+
+[node name="Thruster8" parent="Thrusters" instance=ExtResource("5_c2hm8")]
+transform = Transform3D(1, 0, 0, 0, -0.999976, 0.00689397, 0, -0.00689397, -0.999976, -0.535447, 1.38309, -0.149986)
+backward = true
+pitchUp = true
+
+[node name="Thruster2" parent="Thrusters" instance=ExtResource("5_c2hm8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.62253, 0, 0.623418)
+forward = true
+yawLeft = true
+
+[node name="Thruster3" parent="Thrusters" instance=ExtResource("5_c2hm8")]
+transform = Transform3D(1, 0, 0, 0, 0.834117, -0.551587, 0, 0.551587, 0.834117, 0.012922, -0.466684, 0.482458)
+up = true
+forward = true
+pitchUp = true
+
+[node name="Thruster5" parent="Thrusters" instance=ExtResource("5_c2hm8")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.686852, 0, 0.0438699)
+left = true
+
+[node name="Thruster6" parent="Thrusters" instance=ExtResource("5_c2hm8")]
+transform = Transform3D(1.19209e-07, 0, 1, 0, 1, 0, -1, 0, 1.19209e-07, 0.661681, 0, 0.0438699)
+right = true
+
+[node name="Thruster4" parent="Thrusters" instance=ExtResource("5_c2hm8")]
+transform = Transform3D(1, 0, 0, 0, 0.689189, 0.724581, 0, -0.724581, 0.689189, 0.0129221, 0.582399, 0.56661)
+down = true
+forward = true
+pitchDown = true
+
+[node name="Thruster7" parent="Thrusters" instance=ExtResource("5_c2hm8")]
+transform = Transform3D(-0.070608, -0.108529, 0.991583, 0.0461887, 0.992642, 0.111934, -0.996434, 0.0537034, -0.0650756, 0.511106, 0.579969, -2.41006)
+rollLeft = true
+
+[node name="Turret" type="Node3D" parent="." node_paths=PackedStringArray("camera") groups=["MWcomponent"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.720774, 0, -0.285971)
+script = ExtResource("2_ba1ve")
+camera = NodePath("../Camera3D")
+
+[node name="SpaceAr15" parent="Turret" instance=ExtResource("7_od6jt")]
+transform = Transform3D(-0.5, 0, -7.54979e-08, 0, 0.5, 0, 7.54979e-08, 0, -0.5, 0, 0.0386745, 0.124369)
+
+[node name="Gun" type="Node3D" parent="Turret" node_paths=PackedStringArray("bulletParent", "rigidbody")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0928018, -2.53459)
+script = ExtResource("3_7bh2u")
+bulletPrefab = ExtResource("4_6epoj")
+bulletParent = NodePath("../../../BulletParent")
+rigidbody = NodePath("../..")
+
+[node name="Timer" type="Timer" parent="Turret/Gun"]
+one_shot = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Turret"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.388572)
+visible = false
+material_override = ExtResource("2_ghxtn")
+mesh = SubResource("BoxMesh_uil3i")
+
+[node name="Systems" type="Node3D" parent="."]
+script = ExtResource("9_bguf1")
+
+[node name="ControlSys" type="Node3D" parent="." node_paths=PackedStringArray("rigidbody", "thrusterSys")]
+script = ExtResource("9_recmw")
+rigidbody = NodePath("..")
+thrusterSys = NodePath("../Thrusters")
+
+[node name="Head" type="Node3D" parent="." node_paths=PackedStringArray("camera")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.507361, -0.00242418)
+script = ExtResource("2_ba1ve")
+camera = NodePath("../Camera3D")
+
+[node name="mecha head" parent="Head" instance=ExtResource("12_f4d3h")]
+transform = Transform3D(-0.368638, 0, -2.23517e-08, 0, 0.368638, 0, 2.23517e-08, 0, -0.368638, 0.019114, 0.198135, 0.0590187)
+
+[node name="FuelTank" parent="." instance=ExtResource("13_uv1su")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.00747, -0.788078, -0.121646)
+
+[node name="FuelTank2" parent="." instance=ExtResource("13_uv1su")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.12171, -0.788078, -0.121646)
+
+[node name="Target" type="Node3D" parent="." groups=["Target"]]
+script = ExtResource("14_0al03")
+
+[connection signal="timeout" from="Turret/Gun/Timer" to="Turret/Gun" method="_on_timer_timeout"]
